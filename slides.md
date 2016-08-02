@@ -22,6 +22,22 @@
 
 ## Memory safety? How unsafe could it be?
 
+* Accessing uninitialized data
+
+* Dangling pointers
+
+* Double free
+
+* Data races
+
+
+---
+
+
+## Memory safety? How unsafe could it be?
+
+* Accessing uninitialized data
+
 * Dangling pointers
 
 * Double free
@@ -212,6 +228,8 @@ fn main() {
 let mut v = vec![1, 2, 3];
 let v2 = &mut v;
 v2.truncate(2);
+// Oh no! v doesn't know the referenced vector
+// has changed!
 println!("Let me access v[2]...{}", v[2]);
 ```
 
@@ -225,6 +243,8 @@ println!("Let me access v[2]...{}", v[2]);
 let mut v = vec![1, 2, 3];
 let v2 = &mut v;
 v2.truncate(2);
+// Oh no! v doesn't know the referenced vector
+// has changed!
 println!("Let me access v[2]...{}", v[2]);
 ```
 
@@ -246,3 +266,54 @@ error: cannot borrow `v` as immutable because
 
 	* One or more references (`&T`) to the resource
 	* ==Exactly one== mutable reference (`&mut T`) to the resource
+
+---
+
+### Reference And Borrowing
+
+#### The Rules
+
+1. Any borrow must last for a scope no greater than that of the owner.
+
+2. Either one of the following, but not both at the same time:
+
+	* One or more references (`&T`) to the resource
+	* ==Exactly one== mutable reference (`&mut T`) to the resource
+
+* Shared and mutable state is the root of all :smiling_imp:
+
+---
+
+### Reference And Borrowing
+
+#### The Rules
+
+1. Any borrow must last for a scope no greater than that of the owner.
+
+2. Either one of the following, but not both at the same time:
+
+	* One or more references (`&T`) to the resource
+	* ==Exactly one== mutable reference (`&mut T`) to the resource
+
+* Shared and ~~mutable~~ state is the root of all :smiling_imp:
+
+---
+
+### Reference And Borrowing
+
+#### The Rules
+
+1. Any borrow must last for a scope no greater than that of the owner.
+
+2. Either one of the following, but not both at the same time:
+
+	* One or more references (`&T`) to the resource
+	* ==Exactly one== mutable reference (`&mut T`) to the resource
+
+* ~~Shared~~ and mutable state is the root of all :smiling_imp:
+
+---
+### Reference And Borrowing
+
+#### Okay... But does that matter?
+
