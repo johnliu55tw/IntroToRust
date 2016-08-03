@@ -48,10 +48,6 @@
 
 ---
 
-## Okay... Then show me something
-
----
-
 ## Ownership and Borrowing
 
 ##### Where magic happened :sparkles:
