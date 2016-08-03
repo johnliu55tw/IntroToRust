@@ -14,7 +14,7 @@
 
 * Compiled language. [Blazingly fast!](https://benchmarksgame.alioth.debian.org/u64q/compare.php?lang=rust&lang2=gpp)
 
-* Makes concurrency eas...ier
+* Makes concurrency easy...ier
 
 * Tough but very kind compiler
 
@@ -102,6 +102,26 @@ fn main() {
     println!("{}", v[0]); // Error!!!!
 }
 ```
+
+---
+
+### Ownership
+
+* ==Pass-by-Value== is ==Pass-the-Ownership==
+
+```
+fn take_ownership(v: Vec<i32>) {
+    println!("I got the ownership!!!");
+}
+
+fn main() {
+    // v is the owner of the vector
+    let v = vec![1, 2, 3];
+    // Now pass the ownership to take_ownership
+    take_ownership(v);
+    println!("{}", v[0]); // Error!!!!
+}
+```
 * Unless you got `Copy` trait. :smirk:
 
 ---
@@ -167,7 +187,28 @@ let v2 = vec![1, 2, 3];
 
 let (v1, v2, answer) = foo(v1, v2);
 ```
-#### :scream:
+
+---
+
+### Ownership
+
+"Hey function, I need that ownership back." 
+"Ok then."
+
+```
+fn foo(v1: Vec<i32>, v2: Vec<i32>) 
+      -> (Vec<i32>, Vec<i32>, i32) {
+    // do stuff with v1 and v2...
+    // hand back ownership and the result of our function
+    (v1, v2, 42)
+}
+
+let v1 = vec![1, 2, 3];
+let v2 = vec![1, 2, 3];
+
+let (v1, v2, answer) = foo(v1, v2);
+```
+#### :scream: :scream: :scream:
 
 ---
 
@@ -183,7 +224,7 @@ let (v1, v2, answer) = foo(v1, v2);
 
 ---
 
-### Reference And Borrowing
+### References And Borrowing
 
 #### Shared Reference `&T`
 
@@ -203,7 +244,7 @@ fn main() {
 
 ---
 
-### Reference And Borrowing
+### References And Borrowing
 
 #### Mutable Reference `&mut T`
 
@@ -220,7 +261,7 @@ fn main() {
 
 ---
 
-### Reference And Borrowing
+### References And Borrowing
 
 #### :smiling_imp: :smiling_imp: :smiling_imp:
 
@@ -235,7 +276,7 @@ println!("Let me access v[2]...{}", v[2]);
 
 ---
 
-### Reference And Borrowing
+### References And Borrowing
 
 #### :smiling_imp: :smiling_imp: :smiling_imp:
 
@@ -256,7 +297,7 @@ error: cannot borrow `v` as immutable because
 
 ---
 
-### Reference And Borrowing
+### References And Borrowing
 
 #### The Rules
 
@@ -269,7 +310,7 @@ error: cannot borrow `v` as immutable because
 
 ---
 
-### Reference And Borrowing
+### References And Borrowing
 
 #### The Rules
 
@@ -284,7 +325,7 @@ error: cannot borrow `v` as immutable because
 
 ---
 
-### Reference And Borrowing
+### References And Borrowing
 
 #### The Rules
 
@@ -292,14 +333,14 @@ error: cannot borrow `v` as immutable because
 
 2. Either one of the following, but not both at the same time:
 
-	* One or more references (`&T`) to the resource
+	* **One or more references (`&T`) to the resource**
 	* ==Exactly one== mutable reference (`&mut T`) to the resource
 
 * Shared and ~~mutable~~ state is the root of all :smiling_imp:
 
 ---
 
-### Reference And Borrowing
+### References And Borrowing
 
 #### The Rules
 
@@ -308,12 +349,199 @@ error: cannot borrow `v` as immutable because
 2. Either one of the following, but not both at the same time:
 
 	* One or more references (`&T`) to the resource
-	* ==Exactly one== mutable reference (`&mut T`) to the resource
+	* **==Exactly one== mutable reference (`&mut T`) to the resource**
 
 * ~~Shared~~ and mutable state is the root of all :smiling_imp:
 
 ---
-### Reference And Borrowing
+### References And Borrowing
 
-#### Okay... But does that matter?
+#### Why so serious, compiler?
 
+* Iterator Invalidation
+
+* Use after free
+
+---
+
+### References And Borrowing
+
+#### Why so serious, compiler?
+
+* Iterator Invalidation ex. 1
+
+```
+let mut v = vec![1, 2, 3];
+
+for i in &v {
+    println!("{}", i);
+    v.push(34);
+}
+```
+
+---
+
+### References And Borrowing
+
+#### Why so serious, compiler?
+
+* Iterator Invalidation ex. 1
+
+```
+let mut v = vec![1, 2, 3];
+
+for i in &v {
+    println!("{}", i);
+    v.push(34);
+}
+```
+```
+error: cannot borrow `v` as mutable because it is also
+borrowed as immutable
+    v.push(34);
+    ^
+```
+
+---
+
+### References And Borrowing
+
+#### Why so serious, compiler?
+
+* Iterator Invalidation ex. 2
+
+```
+// Copy elements to another vector
+fn append_vec(from: &Vec<i32>, to: mut &Vec<i32>) {
+    for elem in from.iter() {
+        to.push(*elem);
+    }
+}
+```
+
+---
+
+### References And Borrowing
+
+#### Why so serious, compiler?
+
+* Iterator Invalidation ex. 2
+
+```
+// What if from and to are the same?
+fn append_vec(from: &Vec<i32>, to: mut &Vec<i32>) {
+    for elem in from.iter() {
+        to.push(*elem);
+    }
+}
+```
+
+---
+
+### References And Borrowing
+
+#### Why so serious, compiler?
+
+* Iterator Invalidation ex. 2
+
+```
+// Dangling pointer!!!!
+fn append_vec(from: &Vec<i32>, to: mut &Vec<i32>) {
+    for elem in from.iter() {
+        to.push(*elem);
+    }
+}
+```
+
+---
+
+### References And Borrowing
+
+#### Why so serious, compiler?
+
+* Iterator Invalidation ex. 2
+
+```
+// Dangling pointer!!!!
+fn append_vec(from: &Vec<i32>, to: mut &Vec<i32>) {
+    for elem in from.iter() {
+        to.push(*elem);
+    }
+}
+```
+```
+error: cannot borrow `new_v` as mutable because it is also
+borrowed as immutable
+// Whew~
+```
+
+---
+
+### References And Borrowing
+
+#### Why so serious, compiler?
+
+* Use after free
+
+```
+fn main() {
+    let y: &i32;
+    {
+        let x = 5;
+        y = &x; // borrow a reference from x
+    } // Oh no! x died! what is y now!?
+    println!("{}", y);
+}
+```
+
+---
+
+### References And Borrowing
+
+#### Why so serious, compiler?
+
+* Use after free
+
+```
+fn main() {
+    let y: &i32;
+    {
+        let x = 5;
+        y = &x; // borrow a reference from x
+    } // Oh no! x died! what is y now!?
+    println!("{}", y);
+}
+```
+```
+error: `x` does not live long enough
+    y = &x;
+         ^
+```
+
+---
+
+### But What If I Need Both?
+
+---
+
+### Concurrency in Rust
+
+* Shared nothing (`channel`)
+
+* Shared Immutable Memory (`Arc<T>`)
+
+* Mutation with Synchronization (`Arc<Mutex<T>>`)
+
+---
+
+### Conclusions
+
+* Rust combines high-level features with low-level control
+
+* Rust gives strong safety guarantees beyond what GC can offer:
+
+    * Deterministic destruction
+
+	* Data race freedom
+
+	* Iterator Invalidation
