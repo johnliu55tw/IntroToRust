@@ -1,0 +1,4 @@
+[root]
+name = "concur_shared_mutable"
+version = "0.1.0"
+

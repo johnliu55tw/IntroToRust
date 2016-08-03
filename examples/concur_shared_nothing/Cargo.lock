@@ -1,0 +1,4 @@
+[root]
+name = "concur_shared_nothing"
+version = "0.1.0"
+

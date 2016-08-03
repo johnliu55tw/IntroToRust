@@ -1,0 +1,6 @@
+[package]
+name = "concur_shared_nothing"
+version = "0.1.0"
+authors = ["John Liu <johnliu55tw@gmail.com>"]
+
+[dependencies]
